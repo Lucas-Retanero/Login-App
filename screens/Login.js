@@ -84,6 +84,14 @@ export default function Login({ navigation }) {
         />
       </View>
 
+      <View style={loginStyles.loginButtonContainer}>
+        <Button
+          title="Criar Conta"
+          color="#4A90E2"
+          onPress={() => navigation.navigate('CriarConta')}
+        />
+      </View>
+
       {/* Modal estilizado */}
       <Modal
         visible={showModal}

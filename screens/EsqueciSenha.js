@@ -1,4 +1,3 @@
-// screens/ForgotPassword.js
 import React, { useState } from 'react';
 import {
   View,
@@ -11,95 +10,141 @@ import {
   Pressable,
 } from 'react-native';
 
-const EMAIL_REGEX =
-  /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const BLUE = '#4A90E2';
 
-export default function EsqueciSenha ({ navigation }) {
+export default function EsqueciSenha({ navigation }) {
   const [email, setEmail] = useState('');
-  const [hasError, setHasError] = useState(false);
+  const [senha, setSenha] = useState('');
+  const [confirmarSenha, setConfirmarSenha] = useState('');
+  const [erro, setErro] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const isValid = EMAIL_REGEX.test(email);
 
-  const handleSend = () => {
-    if (!isValid) {
-      setHasError(true);
+  const isValidEmail = EMAIL_REGEX.test(email);
+
+  const handleRedefinir = () => {
+    if (!isValidEmail) {
+      setErro('Digite um e-mail válido.');
       return;
     }
-    setHasError(false);
+    if (!senha || !confirmarSenha) {
+      setErro('Preencha todos os campos.');
+      return;
+    }
+    if (senha !== confirmarSenha) {
+      setErro('As senhas não coincidem.');
+      return;
+    }
+
+    // Simulação de sucesso
+    setErro('');
     setShowModal(true);
   };
 
   const closeModal = () => {
     setShowModal(false);
-    navigation.goBack();
+    navigation.navigate('Login');
   };
 
   return (
-    <View style={styles.container}>
-      {/* Ícone (envelope) */}
-      <View style={styles.iconContainer}>
+    <View style={redefinirSenhaStyles.redefinirSenhaContainer}>
+      {/* Ícone */}
+      <View style={redefinirSenhaStyles.redefinirSenhaIconContainer}>
         <Image
-          source={require('../assets/icon-profile.png')} // usando ícone existente no projeto
-          style={styles.icon}
+          source={require('../assets/icon-profile.png')}
+          style={redefinirSenhaStyles.redefinirSenhaIcon}
           resizeMode="contain"
         />
       </View>
 
-      <Text style={styles.title}>Recuperar senha</Text>
-      <Text style={styles.subtitle}>
-        Informe seu e-mail para enviarmos o link de redefinição.
+      <Text style={redefinirSenhaStyles.redefinirSenhaTitle}>Redefinir Senha</Text>
+      <Text style={redefinirSenhaStyles.redefinirSenhaSubtitle}>
+        Informe seu e-mail e crie uma nova senha.
       </Text>
 
       <TextInput
-        style={[styles.input, (hasError || (email && !isValid)) && styles.inputError]}
-        placeholder="Seu e-mail"
+        style={[
+          redefinirSenhaStyles.redefinirSenhaInput,
+          erro.includes('e-mail') && redefinirSenhaStyles.redefinirSenhaInputError,
+        ]}
+        placeholder="E-mail cadastrado"
         placeholderTextColor="#aaa"
         value={email}
         onChangeText={(t) => {
           setEmail(t.trim());
-          if (hasError) setHasError(false);
+          if (erro) setErro('');
         }}
         autoCapitalize="none"
         keyboardType="email-address"
       />
 
-      {(hasError || (email && !isValid)) && (
-        <Text style={styles.helperError}>
-          Digite um e-mail válido.
-        </Text>
+      <TextInput
+        style={[
+          redefinirSenhaStyles.redefinirSenhaInput,
+          erro.includes('campos') && redefinirSenhaStyles.redefinirSenhaInputError,
+        ]}
+        placeholder="Nova senha"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        value={senha}
+        onChangeText={(t) => {
+          setSenha(t);
+          if (erro) setErro('');
+        }}
+      />
+
+      <TextInput
+        style={[
+          redefinirSenhaStyles.redefinirSenhaInput,
+          erro.includes('coincidem') && redefinirSenhaStyles.redefinirSenhaInputError,
+        ]}
+        placeholder="Confirmar nova senha"
+        placeholderTextColor="#aaa"
+        secureTextEntry
+        value={confirmarSenha}
+        onChangeText={(t) => {
+          setConfirmarSenha(t);
+          if (erro) setErro('');
+        }}
+      />
+
+      {erro !== '' && (
+        <Text style={redefinirSenhaStyles.redefinirSenhaHelperError}>{erro}</Text>
       )}
 
       <TouchableOpacity
-        style={[styles.button, !isValid && styles.buttonDisabled]}
-        onPress={handleSend}
+        style={[redefinirSenhaStyles.redefinirSenhaButton]}
+        onPress={handleRedefinir}
         activeOpacity={0.9}
       >
-        <Text style={styles.buttonText}>Enviar link</Text>
+        <Text style={redefinirSenhaStyles.redefinirSenhaButtonText}>Redefinir Senha</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.goBack()}>
-        <Text style={styles.footerText}>Voltar ao login</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <Text style={redefinirSenhaStyles.redefinirSenhaFooterText}>Voltar ao login</Text>
       </TouchableOpacity>
 
-      {/* Modal de confirmação */}
-      <Modal
-        visible={showModal}
-        transparent
-        animationType="fade"
-        onRequestClose={closeModal}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalCard}>
-            <View style={styles.modalIconWrap}>
-              <Text style={styles.modalIcon}>✉️</Text>
+      {/* Modal de sucesso */}
+      <Modal visible={showModal} transparent animationType="fade" onRequestClose={closeModal}>
+        <View style={redefinirSenhaStyles.redefinirSenhaModalBackdrop}>
+          <View style={redefinirSenhaStyles.redefinirSenhaModalCard}>
+            <View style={redefinirSenhaStyles.redefinirSenhaModalIconWrap}>
+              <Text style={redefinirSenhaStyles.redefinirSenhaModalIcon}>✅</Text>
             </View>
-            <Text style={styles.modalTitle}>E-mail enviado</Text>
-            <Text style={styles.modalText}>
-              Se {email || 'o e-mail informado'} estiver cadastrado, você receberá um link para redefinir sua senha.
+            <Text style={redefinirSenhaStyles.redefinirSenhaModalTitle}>
+              Senha redefinida!
+            </Text>
+            <Text style={redefinirSenhaStyles.redefinirSenhaModalText}>
+              Sua senha foi redefinida com sucesso. Faça login novamente.
             </Text>
 
-            <Pressable style={styles.modalButton} onPress={closeModal}>
-              <Text style={styles.modalButtonText}>Ok, voltar</Text>
+            <Pressable
+              style={redefinirSenhaStyles.redefinirSenhaModalButton}
+              onPress={closeModal}
+            >
+              <Text style={redefinirSenhaStyles.redefinirSenhaModalButtonText}>
+                Voltar ao Login
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -108,17 +153,15 @@ export default function EsqueciSenha ({ navigation }) {
   );
 }
 
-const BLUE = '#4A90E2';
-
-const styles = StyleSheet.create({
-  container: {
+const redefinirSenhaStyles = StyleSheet.create({
+  redefinirSenhaContainer: {
     flex: 1,
     backgroundColor: '#f4f6f9',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 30,
   },
-  iconContainer: {
+  redefinirSenhaIconContainer: {
     width: 145,
     height: 145,
     marginBottom: 25,
@@ -127,18 +170,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  icon: { width: 100, height: 100 },
-  title: {
+  redefinirSenhaIcon: { width: 100, height: 100 },
+  redefinirSenhaTitle: {
     fontSize: 26,
     fontWeight: '600',
     color: '#333',
   },
-  subtitle: {
+  redefinirSenhaSubtitle: {
     color: '#666',
     marginBottom: 30,
     textAlign: 'center',
   },
-  input: {
+  redefinirSenhaInput: {
     width: '100%',
     height: 50,
     backgroundColor: '#fff',
@@ -148,18 +191,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     fontSize: 16,
+    color: '#333',
   },
-  inputError: {
+  redefinirSenhaInputError: {
     borderColor: '#E63946',
   },
-  helperError: {
+  redefinirSenhaHelperError: {
     width: '100%',
     color: '#E63946',
     marginTop: -6,
     marginBottom: 8,
     fontSize: 13,
   },
-  button: {
+  redefinirSenhaButton: {
     width: '100%',
     backgroundColor: BLUE,
     borderRadius: 10,
@@ -172,27 +216,24 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 3,
   },
-  buttonDisabled: {
-    opacity: 0.6,
-  },
-  buttonText: {
+  redefinirSenhaButtonText: {
     color: '#fff',
     fontSize: 18,
     fontWeight: '500',
   },
-  footerText: {
+  redefinirSenhaFooterText: {
     color: BLUE,
     marginTop: 20,
     fontSize: 14,
   },
-  modalBackdrop: {
+  redefinirSenhaModalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.35)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
-  modalCard: {
+  redefinirSenhaModalCard: {
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 16,
@@ -204,7 +245,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
-  modalIconWrap: {
+  redefinirSenhaModalIconWrap: {
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -213,23 +254,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 12,
   },
-  modalIcon: {
+  redefinirSenhaModalIcon: {
     fontSize: 24,
     lineHeight: 24,
   },
-  modalTitle: {
+  redefinirSenhaModalTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#111',
     marginBottom: 6,
   },
-  modalText: {
+  redefinirSenhaModalText: {
     fontSize: 14,
     color: '#555',
     textAlign: 'center',
     marginBottom: 16,
   },
-  modalButton: {
+  redefinirSenhaModalButton: {
     backgroundColor: BLUE,
     borderRadius: 10,
     paddingVertical: 10,
@@ -237,7 +278,7 @@ const styles = StyleSheet.create({
     minWidth: 180,
     alignItems: 'center',
   },
-  modalButtonText: {
+  redefinirSenhaModalButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',

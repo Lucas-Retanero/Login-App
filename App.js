@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const Stack = createNativeStackNavigator();
 
 import Login from './screens/Login';
+import CriarConta from './screens/CriarConta';
 import Home from './screens/Home';
 import EsqueciSenha from './screens/EsqueciSenha';
 import IMC from './screens/IMC';
@@ -39,6 +40,10 @@ export default function App(){
         <Stack.Screen
           name="Temp"
           component={Temp}
+        />
+        <Stack.Screen
+          name="CriarConta"
+          component={CriarConta}
         />
       </Stack.Navigator>
     </NavigationContainer>
