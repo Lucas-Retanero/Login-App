@@ -1,102 +1,224 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, Modal, Pressable, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Image,
+  Modal,
+  Pressable,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import {
+  criarTabelaUsuarios,
+  buscarUsuarioPorEmail,
+  inserirUsuario,
+} from '../database/bancoDados';
 
 export default function CriarConta({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [erro, setErro] = useState('');
-  const [showModal, setShowModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  const handleCriarConta = () => {
+  // mostrar/ocultar igual ao login
+  const [showSenha, setShowSenha] = useState(false);
+  const [showConfirmSenha, setShowConfirmSenha] = useState(false);
+
+  // refs pros inputs
+  const emailRef = useRef(null);
+  const senhaRef = useRef(null);
+  const confirmarRef = useRef(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await criarTabelaUsuarios();
+      } catch (e) {
+        console.log('Erro ao criar tabela:', e);
+      }
+    })();
+  }, []);
+
+  const handleCriarConta = async () => {
     if (!email || !senha || !confirmarSenha) {
       setErro('Preencha todos os campos.');
-      setShowModal(true);
+      setShowErrorModal(true);
       return;
     }
 
     if (senha !== confirmarSenha) {
       setErro('As senhas não coincidem.');
-      setShowModal(true);
+      setShowErrorModal(true);
       return;
     }
 
-    setErro('');
-    setShowModal(false);
+    try {
+      const jaExiste = await buscarUsuarioPorEmail(email.trim());
+      if (jaExiste) {
+        setErro('Já existe uma conta com esse e-mail.');
+        setShowErrorModal(true);
+        return;
+      }
+
+      await inserirUsuario(email.trim(), senha);
+      // deu certo -> mostra modal de sucesso
+      setShowSuccessModal(true);
+    } catch (e) {
+      console.log('Erro ao criar conta:', e);
+      setErro('Erro ao criar conta.');
+      setShowErrorModal(true);
+    }
+  };
+
+  const closeErrorModal = () => setShowErrorModal(false);
+
+  const closeSuccessModal = () => {
+    setShowSuccessModal(false);
     navigation.navigate('Login');
   };
 
-  const closeModal = () => setShowModal(false);
-
   return (
-    <View style={criarContaStyles.criarContaContainer}>
-      <View style={criarContaStyles.criarContaIconContainer}>
-        <Image
-          source={require('../assets/icon-profile.png')}
-          style={criarContaStyles.criarContaIcon}
-        />
-      </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: '#f4f6f9' }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+    >
+      <ScrollView
+        contentContainerStyle={criarContaStyles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={criarContaStyles.criarContaContainer}>
+          <View style={criarContaStyles.criarContaIconContainer}>
+            <Image
+              source={require('../assets/icon-profile.png')}
+              style={criarContaStyles.criarContaIcon}
+            />
+          </View>
 
-      <Text style={criarContaStyles.criarContaTitle}>Criar Conta</Text>
-      <Text style={criarContaStyles.criarContaSubtitle}>Preencha os campos abaixo</Text>
+          <Text style={criarContaStyles.criarContaTitle}>Criar Conta</Text>
+          <Text style={criarContaStyles.criarContaSubtitle}>
+            Preencha os campos abaixo
+          </Text>
 
-      <TextInput
-        style={[
-          criarContaStyles.criarContaInput,
-          erro && criarContaStyles.criarContaInputError,
-        ]}
-        placeholder="Email"
-        placeholderTextColor="#aaa"
-        value={email}
-        onChangeText={(t) => {
-          setEmail(t);
-          if (erro) setErro('');
-        }}
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+          {/* EMAIL */}
+          <TextInput
+            ref={emailRef}
+            style={[
+              criarContaStyles.criarContaInput,
+              erro && criarContaStyles.criarContaInputError,
+            ]}
+            placeholder="Email"
+            placeholderTextColor="#aaa"
+            value={email}
+            onChangeText={(t) => {
+              setEmail(t);
+              if (erro) setErro('');
+            }}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            returnKeyType="next"
+            onSubmitEditing={() => senhaRef.current?.focus()}
+          />
 
-      <TextInput
-        style={[
-          criarContaStyles.criarContaInput,
-          erro && criarContaStyles.criarContaInputError,
-        ]}
-        placeholder="Senha"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={senha}
-        onChangeText={(t) => {
-          setSenha(t);
-          if (erro) setErro('');
-        }}
-      />
+          {/* SENHA com olho (mesmo padrão do login) */}
+          <View
+            style={[
+              criarContaStyles.passwordContainer,
+              erro && criarContaStyles.criarContaInputError,
+            ]}
+          >
+            <TextInput
+              ref={senhaRef}
+              style={criarContaStyles.passwordInput}
+              placeholder="Senha"
+              placeholderTextColor="#aaa"
+              secureTextEntry={!showSenha}
+              value={senha}
+              onChangeText={(t) => {
+                setSenha(t);
+                if (erro) setErro('');
+              }}
+              returnKeyType="next"
+              onSubmitEditing={() => confirmarRef.current?.focus()}
+            />
+            <Pressable
+              onPress={() => setShowSenha((prev) => !prev)}
+              style={criarContaStyles.showPasswordButton}
+              hitSlop={10}
+            >
+              <Ionicons
+                name={showSenha ? 'eye-off-outline' : 'eye-outline'}
+                size={22}
+                color="#4A90E2"
+              />
+            </Pressable>
+          </View>
 
-      <TextInput
-        style={[
-          criarContaStyles.criarContaInput,
-          erro && criarContaStyles.criarContaInputError,
-        ]}
-        placeholder="Confirmar Senha"
-        placeholderTextColor="#aaa"
-        secureTextEntry
-        value={confirmarSenha}
-        onChangeText={(t) => {
-          setConfirmarSenha(t);
-          if (erro) setErro('');
-        }}
-      />
+          {/* CONFIRMAR SENHA com olho também */}
+          <View
+            style={[
+              criarContaStyles.passwordContainer,
+              erro && criarContaStyles.criarContaInputError,
+            ]}
+          >
+            <TextInput
+              ref={confirmarRef}
+              style={criarContaStyles.passwordInput}
+              placeholder="Confirmar Senha"
+              placeholderTextColor="#aaa"
+              secureTextEntry={!showConfirmSenha}
+              value={confirmarSenha}
+              onChangeText={(t) => {
+                setConfirmarSenha(t);
+                if (erro) setErro('');
+              }}
+              returnKeyType="go"
+              onSubmitEditing={handleCriarConta}
+            />
+            <Pressable
+              onPress={() => setShowConfirmSenha((prev) => !prev)}
+              style={criarContaStyles.showPasswordButton}
+              hitSlop={10}
+            >
+              <Ionicons
+                name={showConfirmSenha ? 'eye-off-outline' : 'eye-outline'}
+                size={22}
+                color="#4A90E2"
+              />
+            </Pressable>
+          </View>
 
-      <View style={criarContaStyles.criarContaButtonContainer}>
-        <Button title="Criar Conta" onPress={handleCriarConta} color="#4A90E2" />
-      </View>
+          {/* botão principal */}
+          <Pressable
+            style={criarContaStyles.primaryButton}
+            onPress={handleCriarConta}
+            android_ripple={{ color: '#397ACC' }}
+          >
+            <Text style={criarContaStyles.primaryButtonText}>Criar Conta</Text>
+          </Pressable>
 
-      {/* Texto clicável */}
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={criarContaStyles.voltarLoginText}>Voltar ao login</Text>
-      </TouchableOpacity>
+          {/* voltar */}
+          <Pressable onPress={() => navigation.navigate('Login')} hitSlop={8}>
+            <Text style={criarContaStyles.voltarLoginText}>
+              Voltar ao login
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
 
-      {/* Modal de erro */}
-      <Modal visible={showModal} transparent animationType="fade" onRequestClose={closeModal}>
+      {/* MODAL DE ERRO */}
+      <Modal
+        visible={showErrorModal}
+        transparent
+        animationType="fade"
+        onRequestClose={closeErrorModal}
+      >
         <View style={criarContaStyles.criarContaModalBackdrop}>
           <View style={criarContaStyles.criarContaModalCard}>
             <View style={criarContaStyles.criarContaModalIconWrap}>
@@ -104,23 +226,77 @@ export default function CriarConta({ navigation }) {
             </View>
             <Text style={criarContaStyles.criarContaModalTitle}>Erro</Text>
             <Text style={criarContaStyles.criarContaModalText}>{erro}</Text>
-            <Pressable style={criarContaStyles.criarContaModalButton} onPress={closeModal}>
-              <Text style={criarContaStyles.criarContaModalButtonText}>Tentar novamente</Text>
+            <Pressable
+              style={criarContaStyles.criarContaModalButton}
+              onPress={closeErrorModal}
+              android_ripple={{ color: '#397ACC' }}
+            >
+              <Text style={criarContaStyles.criarContaModalButtonText}>
+                Tentar novamente
+              </Text>
             </Pressable>
           </View>
         </View>
       </Modal>
-    </View>
+
+      {/* MODAL DE SUCESSO */}
+      <Modal
+        visible={showSuccessModal}
+        transparent
+        animationType="fade"
+        onRequestClose={closeSuccessModal}
+      >
+        <View style={criarContaStyles.criarContaModalBackdrop}>
+          <View style={criarContaStyles.criarContaModalCard}>
+            <View
+              style={[
+                criarContaStyles.criarContaModalIconWrap,
+                { backgroundColor: '#E6F8EC' },
+              ]}
+            >
+              <Text
+                style={[
+                  criarContaStyles.criarContaModalIcon,
+                  { color: '#1E7E34' },
+                ]}
+              >
+                ✅
+              </Text>
+            </View>
+            <Text style={criarContaStyles.criarContaModalTitle}>
+              Conta criada!
+            </Text>
+            <Text style={criarContaStyles.criarContaModalText}>
+              Sua conta foi criada com sucesso. Faça login para continuar.
+            </Text>
+
+            <Pressable
+              style={criarContaStyles.criarContaModalButton}
+              onPress={closeSuccessModal}
+              android_ripple={{ color: '#397ACC' }}
+            >
+              <Text style={criarContaStyles.criarContaModalButtonText}>
+                Ir para o Login
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </KeyboardAvoidingView>
   );
 }
 
 const criarContaStyles = StyleSheet.create({
+  scrollContent: {
+    flexGrow: 1,
+  },
   criarContaContainer: {
     flex: 1,
     backgroundColor: '#f4f6f9',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 30,
+    paddingVertical: 40,
   },
   criarContaIconContainer: {
     width: 145,
@@ -143,6 +319,7 @@ const criarContaStyles = StyleSheet.create({
   criarContaSubtitle: {
     color: '#666',
     marginBottom: 30,
+    textAlign: 'center',
   },
   criarContaInput: {
     width: '100%',
@@ -159,11 +336,49 @@ const criarContaStyles = StyleSheet.create({
   criarContaInputError: {
     borderColor: '#E63946',
   },
-  criarContaButtonContainer: {
+  // igual ao login
+  passwordContainer: {
     width: '100%',
-    marginTop: 10,
+    height: 50,
+    backgroundColor: '#fff',
     borderRadius: 10,
-    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginBottom: 12,
+    justifyContent: 'center',
+  },
+  passwordInput: {
+    width: '100%',
+    height: '100%',
+    paddingHorizontal: 15,
+    paddingRight: 45,
+    borderRadius: 10,
+    fontSize: 16,
+    color: '#333',
+  },
+  showPasswordButton: {
+    position: 'absolute',
+    right: 12,
+    padding: 5,
+  },
+  primaryButton: {
+    width: '100%',
+    height: 50,
+    backgroundColor: '#4A90E2',
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 3,
+  },
+  primaryButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '600',
   },
   voltarLoginText: {
     color: '#4A90E2',
@@ -210,6 +425,7 @@ const criarContaStyles = StyleSheet.create({
     fontWeight: '600',
     color: '#111',
     marginBottom: 6,
+    textAlign: 'center',
   },
   criarContaModalText: {
     fontSize: 14,

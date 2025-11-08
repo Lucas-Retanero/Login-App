@@ -10,7 +10,6 @@ import {
   Platform,
   Keyboard,
   StatusBar,
-  TouchableOpacity,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
@@ -20,7 +19,10 @@ export default function TaskList({ navigation }) {
 
   const adicionarTarefa = () => {
     if (!tarefa.trim()) return;
-    setListaTarefas([...listaTarefas, { key: Math.random().toString(), valor: tarefa.trim() }]);
+    setListaTarefas([
+      ...listaTarefas,
+      { key: Math.random().toString(), valor: tarefa.trim() },
+    ]);
     setTarefa('');
     Keyboard.dismiss();
   };
@@ -38,7 +40,8 @@ export default function TaskList({ navigation }) {
           { text: 'Cancelar', style: 'cancel' },
           {
             text: 'Excluir',
-            onPress: () => setListaTarefas(listaTarefas.filter((t) => t.key !== key)),
+            onPress: () =>
+              setListaTarefas(listaTarefas.filter((t) => t.key !== key)),
             style: 'destructive',
           },
         ],
@@ -67,12 +70,14 @@ export default function TaskList({ navigation }) {
       <StatusBar barStyle="light-content" backgroundColor="#121212" />
 
       {/* Botão de voltar no canto superior esquerdo */}
-      <TouchableOpacity
+      <Pressable
         style={styles.backButton}
         onPress={() => navigation.navigate('Home')}
+        hitSlop={8}
+        android_ripple={{ color: '#27272a' }}
       >
         <Text style={styles.backText}>{'<'} Voltar</Text>
-      </TouchableOpacity>
+      </Pressable>
 
       <Text style={styles.titulo}>Minhas Tarefas</Text>
 

@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, StatusBar } from 'react-native';
 
 export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#f4f6f9" />
       {/* Ícone principal */}
       <Image 
         source={{ uri: 'https://cdn-icons-png.flaticon.com/512/25/25694.png' }}

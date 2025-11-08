@@ -9,7 +9,6 @@ import {
   KeyboardAvoidingView,
   StatusBar,
   Alert,
-  TouchableOpacity,
 } from 'react-native';
 
 export default function IMC({ navigation }) {
@@ -56,12 +55,14 @@ export default function IMC({ navigation }) {
       <StatusBar barStyle="dark-content" backgroundColor="#e4ebf0" />
 
       {/* botão de voltar */}
-      <TouchableOpacity
+      <Pressable
         style={styles.backButton}
         onPress={() => navigation.navigate('Home')}
+        // android_ripple={{ color: '#dbeafe' }} // se quiser ripple
+        hitSlop={8}
       >
         <Text style={styles.backText}>{'<'} Voltar</Text>
-      </TouchableOpacity>
+      </Pressable>
 
       <Pressable style={styles.innerContainer} onPress={Keyboard.dismiss}>
         <View style={styles.card}>

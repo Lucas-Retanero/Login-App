@@ -1,6 +1,7 @@
 import * as React from 'react';
+import { useEffect } from 'react';
 
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 const Stack = createNativeStackNavigator();
@@ -13,8 +14,20 @@ import IMC from './screens/IMC';
 import TaskList from './screens/TaskList';
 import Temp from './screens/Temp';
 
-export default function App(){
-  return(
+import { criarTabelaUsuarios } from './database/bancoDados';
+
+export default function App() {
+  useEffect(() => {
+    (async () => {
+      try {
+        await criarTabelaUsuarios();
+      } catch (e) {
+        console.log('Erro ao criar tabela de usuários:', e);
+      }
+    })();
+  }, []);
+
+  return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen
@@ -47,5 +60,5 @@ export default function App(){
         />
       </Stack.Navigator>
     </NavigationContainer>
-  )
+  );
 }
