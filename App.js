@@ -13,8 +13,9 @@ import EsqueciSenha from './screens/EsqueciSenha';
 import IMC from './screens/IMC';
 import TaskList from './screens/TaskList';
 import Temp from './screens/Temp';
+import Frases from './screens/Frases';
 
-import { criarTabelaUsuarios } from './database/bancoDados';
+import { criarTabelaUsuarios } from './dataBase/bancoDados';
 
 export default function App() {
   useEffect(() => {
@@ -53,6 +54,10 @@ export default function App() {
         <Stack.Screen
           name="Temp"
           component={Temp}
+        />
+        <Stack.Screen
+          name="Frases"
+          component={Frases}
         />
         <Stack.Screen
           name="CriarConta"

@@ -1,15 +1,5 @@
 import React, { useState, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  Pressable,
-  Keyboard,
-  KeyboardAvoidingView,
-  StatusBar,
-  Alert,
-} from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, Keyboard, KeyboardAvoidingView, StatusBar, Alert } from 'react-native';
 
 export default function IMC({ navigation }) {
   const [peso, setPeso] = useState('');
@@ -54,11 +44,9 @@ export default function IMC({ navigation }) {
     <KeyboardAvoidingView style={styles.app} behavior="padding">
       <StatusBar barStyle="dark-content" backgroundColor="#e4ebf0" />
 
-      {/* botão de voltar */}
       <Pressable
         style={styles.backButton}
         onPress={() => navigation.navigate('Home')}
-        // android_ripple={{ color: '#dbeafe' }} // se quiser ripple
         hitSlop={8}
       >
         <Text style={styles.backText}>{'<'} Voltar</Text>
@@ -125,10 +113,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e4ebf0',
   },
-  // botão fixo no topo
   backButton: {
     position: 'absolute',
-    top: 50, // ajusta se tiver notch
+    top: 50,
     left: 20,
     backgroundColor: '#fff',
     paddingHorizontal: 12,

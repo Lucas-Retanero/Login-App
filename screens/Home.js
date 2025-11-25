@@ -1,50 +1,60 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, StatusBar } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Image, StatusBar } from 'react-native';
 
 export default function Home({ navigation }) {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#f4f6f9" />
-      {/* Ícone principal */}
-      <Image 
+
+      <Image
         source={{ uri: 'https://cdn-icons-png.flaticon.com/512/25/25694.png' }}
         style={styles.icon}
       />
 
-      {/* Títulos */}
       <Text style={styles.title}>Tela Inicial</Text>
       <Text style={styles.subtitle}>Escolha um dos aplicativos abaixo:</Text>
 
-      {/* Grade dos apps */}
       <View style={styles.grid}>
-        <TouchableOpacity style={styles.appBox} onPress={() => navigation.navigate('IMC')}>
+        {/* IMC */}
+        <Pressable style={styles.appBox} onPress={() => navigation.navigate('IMC')}>
           <Image
-            source={{ uri: 'https://cdn-icons-png.flaticon.com/512/1082/1082313.png' }}
+            source={require('../assets/Icon-IMC.png')}
             style={styles.appIcon}
+            resizeMode="cover"
           />
-          <Text style={styles.appText}>IMC</Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity style={styles.appBox} onPress={() => navigation.navigate('TaskList')}>
-          <Text style={styles.appText}>Task List</Text>
-        </TouchableOpacity>
+        <Pressable style={styles.appBox} onPress={() => navigation.navigate('TaskList')}>
+          <Image
+            source={require('../assets/Icon-Task-List.png')}
+            style={styles.appIcon}
+            resizeMode="cover"
+          />
+        </Pressable>
 
-        <TouchableOpacity style={styles.appBox} onPress={() => navigation.navigate('Temp')}>
-          <Text style={styles.appText}>Conversor de Temperatura</Text>
-        </TouchableOpacity>
+        <Pressable style={styles.appBox} onPress={() => navigation.navigate('Temp')}>
+          <Image
+            source={require('../assets/Icon-Scale.png')}
+            style={styles.appIcon}
+            resizeMode="cover"
+          />
+        </Pressable>
 
-        <TouchableOpacity style={styles.appBox} onPress={() => navigation.navigate('App4')}>
-          <Text style={styles.appText}>App 4</Text>
-        </TouchableOpacity>
+        <Pressable style={styles.appBox} onPress={() => navigation.navigate('Frases')}>
+          <Image
+            source={require('../assets/Icon-Phrasy.png')}
+            style={styles.appIcon}
+            resizeMode="cover"
+          />
+        </Pressable>
       </View>
 
-      {/* Botão de sair */}
-      <TouchableOpacity
+      <Pressable
         style={styles.button}
         onPress={() => navigation.navigate('Login')}
       >
         <Text style={styles.buttonText}>Sair</Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }
@@ -91,17 +101,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 3,
-  },
-  appText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '500',
+    overflow: 'hidden', 
   },
   appIcon: {
-    width: 50,
-    height: 50,
-    marginBottom: 10,
-    tintColor: '#fff',
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
   },
   button: {
     width: '100%',

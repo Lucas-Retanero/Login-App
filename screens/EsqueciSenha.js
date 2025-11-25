@@ -1,23 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Image,
-  Modal,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StatusBar,
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  criarTabelaUsuarios,
-  atualizarSenhaPorEmail,
-  buscarUsuarioPorEmail,
-} from '../database/bancoDados';
+import { criarTabelaUsuarios, atualizarSenhaPorEmail, buscarUsuarioPorEmail } from '../dataBase/bancoDados';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const BLUE = '#4A90E2';
@@ -115,7 +99,6 @@ export default function EsqueciSenha({ navigation }) {
             Informe seu e-mail e crie uma nova senha.
           </Text>
 
-          {/* E-MAIL */}
           <TextInput
             ref={emailRef}
             style={[
@@ -136,7 +119,6 @@ export default function EsqueciSenha({ navigation }) {
             onSubmitEditing={() => senhaRef.current?.focus()}
           />
 
-          {/* NOVA SENHA com olho */}
           <View
             style={[
               redefinirSenhaStyles.passwordContainer,
@@ -171,7 +153,6 @@ export default function EsqueciSenha({ navigation }) {
             </Pressable>
           </View>
 
-          {/* CONFIRMAR SENHA com olho */}
           <View
             style={[
               redefinirSenhaStyles.passwordContainer,
@@ -230,7 +211,6 @@ export default function EsqueciSenha({ navigation }) {
         </View>
       </ScrollView>
 
-      {/* Modal de sucesso */}
       <Modal
         visible={showModal}
         transparent
@@ -311,7 +291,6 @@ const redefinirSenhaStyles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
   },
-  // container de senha igual das outras telas
   passwordContainer: {
     width: '100%',
     height: 50,

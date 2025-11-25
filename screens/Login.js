@@ -1,22 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Image,
-  Modal,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  StatusBar,
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  criarTabelaUsuarios,
-  autenticarUsuario,
-} from '../database/bancoDados';
+import { criarTabelaUsuarios, autenticarUsuario } from '../dataBase/bancoDados';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -82,7 +67,6 @@ export default function Login({ navigation }) {
             Faça login para continuar
           </Text>
 
-          {/* E-mail */}
           <TextInput
             ref={emailRef}
             style={[
@@ -104,7 +88,6 @@ export default function Login({ navigation }) {
             }}
           />
 
-          {/* Senha */}
           <View
             style={[
               loginStyles.passwordContainer,
@@ -144,7 +127,6 @@ export default function Login({ navigation }) {
             </Text>
           )}
 
-          {/* Esqueceu a senha */}
           <View style={loginStyles.forgotWrapper}>
             <Pressable
               onPress={() => navigation.navigate('EsqueciSenha')}
@@ -154,7 +136,6 @@ export default function Login({ navigation }) {
             </Pressable>
           </View>
 
-          {/* Botão principal */}
           <Pressable
             style={loginStyles.primaryButton}
             onPress={handleLogin}
@@ -163,7 +144,6 @@ export default function Login({ navigation }) {
             <Text style={loginStyles.primaryButtonText}>Entrar</Text>
           </Pressable>
 
-          {/* Texto "Crie uma conta" */}
           <View style={loginStyles.registerTextWrapper}>
             <Text style={loginStyles.registerText}>
               Não tem uma conta?{'  '}
@@ -175,7 +155,6 @@ export default function Login({ navigation }) {
         </View>
       </ScrollView>
 
-      {/* Modal de erro */}
       <Modal
         visible={showModal}
         transparent
@@ -208,17 +187,15 @@ export default function Login({ navigation }) {
 }
 
 const loginStyles = StyleSheet.create({
-  // agora o ScrollView ocupa tudo, mas quem centraliza é o filho
   scrollContent: {
     flexGrow: 1,
   },
-  // esse fica centralizado na tela
   loginContainer: {
     flex: 1,
     width: '100%',
     backgroundColor: '#f4f6f9',
     alignItems: 'center',
-    justifyContent: 'center', // centraliza vertical
+    justifyContent: 'center',
     paddingHorizontal: 30,
     paddingVertical: 40,
   },

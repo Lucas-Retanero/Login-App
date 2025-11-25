@@ -1,36 +1,54 @@
-import { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  Pressable,
-  FlatList,
-  StyleSheet,
-  Alert,
-  Platform,
-  Keyboard,
-  StatusBar,
-} from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, Text, TextInput, Pressable, FlatList, StyleSheet, Alert, Platform, Keyboard, StatusBar } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
+import {
+  criarTabelaTarefas,
+  inserirTarefa,
+  listarTarefas,
+  removerTarefaDB,
+} from '../dataBase/bancoDados';
 
 export default function TaskList({ navigation }) {
   const [tarefa, setTarefa] = useState('');
   const [listaTarefas, setListaTarefas] = useState([]);
 
-  const adicionarTarefa = () => {
+  // cria tabela e carrega tarefas ao abrir a tela
+  useEffect(() => {
+    (async () => {
+      await criarTabelaTarefas();
+      const tarefasDB = await listarTarefas();
+
+      const formatadas = tarefasDB.map((t) => ({
+        key: String(t.id),
+        valor: t.descricao,
+      }));
+
+      setListaTarefas(formatadas);
+    })();
+  }, []);
+
+  const adicionarTarefa = async () => {
     if (!tarefa.trim()) return;
+
+    const id = await inserirTarefa(tarefa.trim());
+
     setListaTarefas([
       ...listaTarefas,
-      { key: Math.random().toString(), valor: tarefa.trim() },
+      { key: String(id), valor: tarefa.trim() },
     ]);
     setTarefa('');
     Keyboard.dismiss();
   };
 
   const removerTarefa = (key, valor) => {
+    const excluir = async () => {
+      await removerTarefaDB(Number(key));
+      setListaTarefas(listaTarefas.filter((t) => t.key !== key));
+    };
+
     if (Platform.OS === 'web') {
       if (window.confirm(`Deseja excluir a tarefa: "${valor}"?`)) {
-        setListaTarefas(listaTarefas.filter((t) => t.key !== key));
+        excluir();
       }
     } else {
       Alert.alert(
@@ -40,8 +58,7 @@ export default function TaskList({ navigation }) {
           { text: 'Cancelar', style: 'cancel' },
           {
             text: 'Excluir',
-            onPress: () =>
-              setListaTarefas(listaTarefas.filter((t) => t.key !== key)),
+            onPress: () => excluir(),
             style: 'destructive',
           },
         ],
@@ -69,7 +86,6 @@ export default function TaskList({ navigation }) {
     <View style={styles.app}>
       <StatusBar barStyle="light-content" backgroundColor="#121212" />
 
-      {/* Botão de voltar no canto superior esquerdo */}
       <Pressable
         style={styles.backButton}
         onPress={() => navigation.navigate('Home')}
@@ -138,7 +154,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#121212',
     paddingTop: 100,
   },
-  // Botão de voltar
   backButton: {
     position: 'absolute',
     top: 50,

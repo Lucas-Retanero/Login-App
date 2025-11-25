@@ -1,22 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  Image,
-  Modal,
-  Pressable,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {
-  criarTabelaUsuarios,
-  buscarUsuarioPorEmail,
-  inserirUsuario,
-} from '../database/bancoDados';
+import { criarTabelaUsuarios, buscarUsuarioPorEmail, inserirUsuario } from '../dataBase/bancoDados';
 
 export default function CriarConta({ navigation }) {
   const [email, setEmail] = useState('');
@@ -106,7 +91,6 @@ export default function CriarConta({ navigation }) {
             Preencha os campos abaixo
           </Text>
 
-          {/* EMAIL */}
           <TextInput
             ref={emailRef}
             style={[
@@ -126,7 +110,6 @@ export default function CriarConta({ navigation }) {
             onSubmitEditing={() => senhaRef.current?.focus()}
           />
 
-          {/* SENHA com olho (mesmo padrão do login) */}
           <View
             style={[
               criarContaStyles.passwordContainer,
@@ -160,7 +143,6 @@ export default function CriarConta({ navigation }) {
             </Pressable>
           </View>
 
-          {/* CONFIRMAR SENHA com olho também */}
           <View
             style={[
               criarContaStyles.passwordContainer,
@@ -194,7 +176,6 @@ export default function CriarConta({ navigation }) {
             </Pressable>
           </View>
 
-          {/* botão principal */}
           <Pressable
             style={criarContaStyles.primaryButton}
             onPress={handleCriarConta}
@@ -203,7 +184,6 @@ export default function CriarConta({ navigation }) {
             <Text style={criarContaStyles.primaryButtonText}>Criar Conta</Text>
           </Pressable>
 
-          {/* voltar */}
           <Pressable onPress={() => navigation.navigate('Login')} hitSlop={8}>
             <Text style={criarContaStyles.voltarLoginText}>
               Voltar ao login
@@ -212,7 +192,6 @@ export default function CriarConta({ navigation }) {
         </View>
       </ScrollView>
 
-      {/* MODAL DE ERRO */}
       <Modal
         visible={showErrorModal}
         transparent
@@ -239,7 +218,6 @@ export default function CriarConta({ navigation }) {
         </View>
       </Modal>
 
-      {/* MODAL DE SUCESSO */}
       <Modal
         visible={showSuccessModal}
         transparent
@@ -336,7 +314,6 @@ const criarContaStyles = StyleSheet.create({
   criarContaInputError: {
     borderColor: '#E63946',
   },
-  // igual ao login
   passwordContainer: {
     width: '100%',
     height: 50,
