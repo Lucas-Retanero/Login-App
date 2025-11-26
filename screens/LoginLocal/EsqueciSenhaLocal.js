@@ -1,40 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, ScrollView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { criarTabelaUsuarios, atualizarSenhaPorEmail, buscarUsuarioPorEmail } from '../dataBase/bancoDados';
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const BLUE = '#4A90E2';
 
-export default function EsqueciSenha({ navigation }) {
+export default function EsqueciSenhaLocal({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
   const [erro, setErro] = useState('');
   const [showModal, setShowModal] = useState(false);
 
-  // novos: mostrar/ocultar
   const [showNovaSenha, setShowNovaSenha] = useState(false);
   const [showConfirmarSenha, setShowConfirmarSenha] = useState(false);
 
-  // refs pros campos
   const emailRef = useRef(null);
   const senhaRef = useRef(null);
   const confirmarRef = useRef(null);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await criarTabelaUsuarios();
-      } catch (e) {
-        console.log(e);
-      }
-    })();
-  }, []);
+  const handleRedefinir = () => {
+    const emailNormalizado = email.trim();
 
-  const handleRedefinir = async () => {
-    if (!EMAIL_REGEX.test(email)) {
-      setErro('Digite um e-mail válido.');
+    if (!emailNormalizado) {
+      setErro('Informe o e-mail cadastrado.');
       return;
     }
     if (!senha || !confirmarSenha) {
@@ -47,35 +35,53 @@ export default function EsqueciSenha({ navigation }) {
     }
 
     try {
-      const usuario = await buscarUsuarioPorEmail(email.trim());
-      if (!usuario) {
+      const storage =
+        typeof window !== 'undefined' && window.localStorage
+          ? window.localStorage
+          : null;
+
+      if (!storage) {
+        setErro('LocalStorage não está disponível nesta plataforma.');
+        return;
+      }
+
+      const userData = storage.getItem('usuarioLocal');
+
+      if (!userData) {
+        setErro('Nenhum usuário cadastrado.');
+        return;
+      }
+
+      const user = JSON.parse(userData);
+
+      if (!user.email || user.email.trim() !== emailNormalizado) {
         setErro('Não existe usuário com esse e-mail.');
         return;
       }
 
-      const linhas = await atualizarSenhaPorEmail(email.trim(), senha);
-      if (linhas > 0) {
-        setErro('');
-        setShowModal(true);
-      } else {
-        setErro('Não foi possível atualizar a senha.');
-      }
+      const updatedUser = {
+        ...user,
+        senha: senha,
+      };
+
+      storage.setItem('usuarioLocal', JSON.stringify(updatedUser));
+      setErro('');
+      setShowModal(true);
     } catch (e) {
-      console.log('Erro ao redefinir senha:', e);
+      console.log('Erro ao redefinir senha (LocalStorage):', e);
       setErro('Erro ao redefinir senha.');
     }
   };
 
   const closeModal = () => {
     setShowModal(false);
-    navigation.navigate('Login');
+    navigation.navigate('LoginLocal');
   };
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: '#f4f6f9' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      behavior="padding"
     >
       <StatusBar barStyle="dark-content" backgroundColor="#f4f6f9" />
       <ScrollView
@@ -86,7 +92,7 @@ export default function EsqueciSenha({ navigation }) {
           {/* Ícone */}
           <View style={redefinirSenhaStyles.redefinirSenhaIconContainer}>
             <Image
-              source={require('../assets/icon-profile.png')}
+              source={require('../../assets/icon-profile.png')}
               style={redefinirSenhaStyles.redefinirSenhaIcon}
               resizeMode="contain"
             />
@@ -96,9 +102,10 @@ export default function EsqueciSenha({ navigation }) {
             Redefinir Senha
           </Text>
           <Text style={redefinirSenhaStyles.redefinirSenhaSubtitle}>
-            Informe seu e-mail e crie uma nova senha.
+            Informe seu e-mail e crie uma nova senha. (LocalStorage)
           </Text>
 
+          {/* E-MAIL */}
           <TextInput
             ref={emailRef}
             style={[
@@ -110,7 +117,7 @@ export default function EsqueciSenha({ navigation }) {
             placeholderTextColor="#aaa"
             value={email}
             onChangeText={(t) => {
-              setEmail(t.trim());
+              setEmail(t);
               if (erro) setErro('');
             }}
             autoCapitalize="none"
@@ -203,7 +210,10 @@ export default function EsqueciSenha({ navigation }) {
             </Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('Login')} hitSlop={8}>
+          <Pressable
+            onPress={() => navigation.navigate('LoginLocal')}
+            hitSlop={8}
+          >
             <Text style={redefinirSenhaStyles.redefinirSenhaFooterText}>
               Voltar ao login
             </Text>

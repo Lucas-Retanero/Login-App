@@ -1,12 +1,7 @@
 import { useState, useEffect } from 'react';
 import { View, Text, TextInput, Pressable, FlatList, StyleSheet, Alert, Platform, Keyboard, StatusBar } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import {
-  criarTabelaTarefas,
-  inserirTarefa,
-  listarTarefas,
-  removerTarefaDB,
-} from '../dataBase/bancoDados';
+import { criarTabelaTarefas, inserirTarefa, listarTarefas, removerTarefaDB } from '../../dataBase/bancoDados';
 
 export default function TaskList({ navigation }) {
   const [tarefa, setTarefa] = useState('');
@@ -84,7 +79,7 @@ export default function TaskList({ navigation }) {
 
   return (
     <View style={styles.app}>
-      <StatusBar barStyle="light-content" backgroundColor="#121212" />
+      <StatusBar barStyle="dark-content" backgroundColor="#f4f6f9" />
 
       <Pressable
         style={styles.backButton}
@@ -151,102 +146,121 @@ export default function TaskList({ navigation }) {
 const styles = StyleSheet.create({
   app: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: '#f4f6f9',
     paddingTop: 100,
   },
+
   backButton: {
     position: 'absolute',
     top: 50,
     left: 20,
-    backgroundColor: '#1E1E1E',
+    backgroundColor: '#ffffff',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-    zIndex: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
     elevation: 3,
   },
   backText: {
-    color: '#9333EA',
+    color: '#4A90E2',
     fontWeight: '600',
     fontSize: 14,
   },
+
   titulo: {
-    fontSize: 34,
-    fontWeight: '900',
-    color: '#9333EA',
+    fontSize: 30,
+    fontWeight: '700',
+    color: '#4A90E2',
     textAlign: 'center',
-    marginTop: 25,
-    marginBottom: 30,
+    marginTop: 20,
+    marginBottom: 25,
   },
+
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 20,
-    marginBottom: 25,
+    marginBottom: 20,
   },
+
   input: {
     flex: 1,
-    height: 56,
+    height: 52,
     borderWidth: 1,
-    borderColor: '#4B4B4B',
-    borderRadius: 16,
-    paddingHorizontal: 18,
-    backgroundColor: '#1E1E1E',
+    borderColor: '#dee2e6',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    backgroundColor: '#ffffff',
     fontSize: 16,
-    color: '#FFFFFF',
-    marginRight: 12,
-    fontWeight: '500',
-    elevation: 4,
+    color: '#333',
+    marginRight: 10,
   },
+
   botaoAdicionar: {
-    width: 56,
-    height: 56,
-    borderRadius: 16,
-    backgroundColor: '#9333EA',
+    width: 52,
+    height: 52,
+    borderRadius: 12,
+    backgroundColor: '#4A90E2',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.18,
+    shadowRadius: 4,
+    elevation: 5,
   },
+
   botaoDesativado: {
-    backgroundColor: '#4B4B4B',
+    backgroundColor: '#dee2e6',
     elevation: 2,
   },
+
   tarefaContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1E1E1E',
-    paddingVertical: 18,
-    paddingHorizontal: 20,
-    borderRadius: 16,
-    marginBottom: 16,
-    borderLeftWidth: 6,
-    borderLeftColor: '#9333EA',
-    elevation: 3,
+
+    backgroundColor: '#ffffff',
+    paddingVertical: 16,
+    paddingHorizontal: 18,
+    borderRadius: 14,
+    marginBottom: 14,
+
+    borderLeftWidth: 5,
+    borderLeftColor: '#4A90E2',
+
+    shadowColor: '#000',
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 2,
   },
+
   tarefaTexto: {
-    fontSize: 17,
-    color: '#FFFFFF',
-    fontWeight: '600',
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
     flex: 1,
-    marginRight: 15,
+    marginRight: 12,
   },
+
   botaoDeletar: {
     padding: 10,
-    borderRadius: 12,
-    backgroundColor: '#B91C1C',
+    borderRadius: 10,
+    backgroundColor: '#E63946',
   },
+
   listaVaziaContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 40,
   },
+
   listaVaziaTexto: {
     textAlign: 'center',
-    fontSize: 16,
-    color: '#A1A1AA',
-    fontWeight: '500',
-    lineHeight: 24,
+    fontSize: 15,
+    color: '#666',
+    lineHeight: 22,
   },
 });

@@ -15,7 +15,7 @@ export default function Home({ navigation }) {
       <Text style={styles.subtitle}>Escolha um dos aplicativos abaixo:</Text>
 
       <View style={styles.grid}>
-        {/* IMC */}
+
         <Pressable style={styles.appBox} onPress={() => navigation.navigate('IMC')}>
           <Image
             source={require('../assets/Icon-IMC.png')}
@@ -50,8 +50,15 @@ export default function Home({ navigation }) {
       </View>
 
       <Pressable
+        style={styles.aboutButton}
+        onPress={() => navigation.navigate('Sobre')}
+      >
+        <Text style={styles.aboutButtonText}>Sobre o App</Text>
+      </Pressable>
+
+      <Pressable
         style={styles.button}
-        onPress={() => navigation.navigate('Login')}
+        onPress={() => navigation.navigate('EscolhaLogin')}
       >
         <Text style={styles.buttonText}>Sair</Text>
       </Pressable>
@@ -70,7 +77,7 @@ const styles = StyleSheet.create({
   icon: {
     width: 100,
     height: 100,
-    marginBottom: 25,
+    marginBottom: 24,
     tintColor: '#4A90E2',
   },
   title: {
@@ -87,34 +94,51 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'center',
     gap: 15,
-    marginBottom: 40,
+    marginBottom: 26,
   },
-  appBox: {
-    width: 120,
-    height: 120,
-    backgroundColor: '#4A90E2',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 3,
-    overflow: 'hidden', 
-  },
+appBox: {
+  width: 120,
+  height: 120,
+  backgroundColor: '#ffffff',
+  padding: 5,
+  borderRadius: 14,
+  alignItems: 'center',
+  justifyContent: 'center',
+  shadowColor: '#242424ff',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.15,
+  shadowRadius: 4,
+  elevation: 4,
+},
+
   appIcon: {
     width: '100%',
     height: '100%',
     borderRadius: 10,
   },
+
+  aboutButton: {
+    width: '100%',
+    backgroundColor: '#dee2e6',
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginBottom: 10,
+    elevation: 2,
+  },
+  aboutButtonText: {
+    color: '#4A90E2',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
   button: {
     width: '100%',
     backgroundColor: '#4A90E2',
     borderRadius: 10,
     paddingVertical: 12,
     alignItems: 'center',
-    marginTop: 10,
+    marginTop: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,

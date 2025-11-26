@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, Platform, ScrollView, StatusBar } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, ScrollView, StatusBar } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { criarTabelaUsuarios, autenticarUsuario } from '../dataBase/bancoDados';
+import { criarTabelaUsuarios, autenticarUsuario } from '../../dataBase/bancoDados';
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -46,10 +46,18 @@ export default function Login({ navigation }) {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: '#f4f6f9' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      behavior="padding"
     >
       <StatusBar barStyle="dark-content" backgroundColor="#f4f6f9" />
+
+      <Pressable
+        style={loginStyles.backButton}
+        onPress={() => navigation.navigate('EscolhaLogin')}
+        hitSlop={8}
+      >
+        <Text style={loginStyles.backText}>{'<'} Voltar</Text>
+      </Pressable>
+
       <ScrollView
         contentContainerStyle={loginStyles.scrollContent}
         keyboardShouldPersistTaps="handled"
@@ -57,7 +65,7 @@ export default function Login({ navigation }) {
         <View style={loginStyles.loginContainer}>
           <View style={loginStyles.loginIconContainer}>
             <Image
-              source={require('../assets/icon-profile.png')}
+              source={require('../../assets/icon-profile.png')}
               style={loginStyles.loginIcon}
             />
           </View>
@@ -83,9 +91,7 @@ export default function Login({ navigation }) {
             autoCapitalize="none"
             keyboardType="email-address"
             returnKeyType="next"
-            onSubmitEditing={() => {
-              passwordRef.current?.focus();
-            }}
+            onSubmitEditing={() => passwordRef.current?.focus()}
           />
 
           <View
@@ -146,7 +152,7 @@ export default function Login({ navigation }) {
 
           <View style={loginStyles.registerTextWrapper}>
             <Text style={loginStyles.registerText}>
-              Não tem uma conta?{'  '}
+              Não tem uma conta?{' '}
             </Text>
             <Pressable onPress={() => navigation.navigate('CriarConta')}>
               <Text style={loginStyles.registerLink}>Crie uma agora!</Text>
@@ -190,6 +196,24 @@ const loginStyles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
   },
+
+  backButton: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    zIndex: 10,
+    elevation: 3,
+  },
+  backText: {
+    color: '#4A90E2',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+
   loginContainer: {
     flex: 1,
     width: '100%',
@@ -311,6 +335,7 @@ const loginStyles = StyleSheet.create({
     fontWeight: '700',
     fontSize: 14,
   },
+
   loginModalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.35)',
@@ -318,6 +343,7 @@ const loginStyles = StyleSheet.create({
     alignItems: 'center',
     padding: 24,
   },
+
   loginModalCard: {
     width: '100%',
     backgroundColor: '#fff',
@@ -330,6 +356,7 @@ const loginStyles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
+
   loginModalIconWrap: {
     width: 56,
     height: 56,
@@ -339,24 +366,28 @@ const loginStyles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 12,
   },
+
   loginModalIcon: {
     color: '#E63946',
     fontWeight: '700',
     fontSize: 26,
     lineHeight: 24,
   },
+
   loginModalTitle: {
     fontSize: 18,
     fontWeight: '600',
     color: '#111',
     marginBottom: 6,
   },
+
   loginModalText: {
     fontSize: 14,
     color: '#555',
     textAlign: 'center',
     marginBottom: 16,
   },
+
   loginModalButton: {
     backgroundColor: '#4A90E2',
     borderRadius: 10,
@@ -365,6 +396,7 @@ const loginStyles = StyleSheet.create({
     minWidth: 180,
     alignItems: 'center',
   },
+
   loginModalButtonText: {
     color: '#fff',
     fontSize: 16,

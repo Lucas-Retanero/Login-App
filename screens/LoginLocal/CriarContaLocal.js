@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { View, Text, TextInput, StyleSheet, Image, Modal, Pressable, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { criarTabelaUsuarios, buscarUsuarioPorEmail, inserirUsuario } from '../dataBase/bancoDados';
 
-export default function CriarConta({ navigation }) {
+export default function CriarContaLocal({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -11,26 +10,14 @@ export default function CriarConta({ navigation }) {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
-  // mostrar/ocultar igual ao login
   const [showSenha, setShowSenha] = useState(false);
   const [showConfirmSenha, setShowConfirmSenha] = useState(false);
 
-  // refs pros inputs
   const emailRef = useRef(null);
   const senhaRef = useRef(null);
   const confirmarRef = useRef(null);
 
-  useEffect(() => {
-    (async () => {
-      try {
-        await criarTabelaUsuarios();
-      } catch (e) {
-        console.log('Erro ao criar tabela:', e);
-      }
-    })();
-  }, []);
-
-  const handleCriarConta = async () => {
+  const handleCriarConta = () => {
     if (!email || !senha || !confirmarSenha) {
       setErro('Preencha todos os campos.');
       setShowErrorModal(true);
@@ -44,18 +31,32 @@ export default function CriarConta({ navigation }) {
     }
 
     try {
-      const jaExiste = await buscarUsuarioPorEmail(email.trim());
-      if (jaExiste) {
-        setErro('Já existe uma conta com esse e-mail.');
+      if (typeof localStorage === 'undefined') {
+        setErro('LocalStorage não está disponível nesta plataforma.');
         setShowErrorModal(true);
         return;
       }
 
-      await inserirUsuario(email.trim(), senha);
-      // deu certo -> mostra modal de sucesso
+      const usuarioSalvo = localStorage.getItem('usuarioLocal');
+
+      if (usuarioSalvo) {
+        const { email: savedEmail } = JSON.parse(usuarioSalvo);
+        if (savedEmail === email.trim()) {
+          setErro('Já existe uma conta com esse e-mail.');
+          setShowErrorModal(true);
+          return;
+        }
+      }
+
+      const novoUsuario = {
+        email: email.trim(),
+        senha: senha,
+      };
+
+      localStorage.setItem('usuarioLocal', JSON.stringify(novoUsuario));
       setShowSuccessModal(true);
     } catch (e) {
-      console.log('Erro ao criar conta:', e);
+      console.log('Erro ao criar conta (LocalStorage):', e);
       setErro('Erro ao criar conta.');
       setShowErrorModal(true);
     }
@@ -65,14 +66,13 @@ export default function CriarConta({ navigation }) {
 
   const closeSuccessModal = () => {
     setShowSuccessModal(false);
-    navigation.navigate('Login');
+    navigation.navigate('LoginLocal');
   };
 
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: '#f4f6f9' }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+      behavior="padding"
     >
       <ScrollView
         contentContainerStyle={criarContaStyles.scrollContent}
@@ -81,14 +81,14 @@ export default function CriarConta({ navigation }) {
         <View style={criarContaStyles.criarContaContainer}>
           <View style={criarContaStyles.criarContaIconContainer}>
             <Image
-              source={require('../assets/icon-profile.png')}
+              source={require('../../assets/icon-profile.png')}
               style={criarContaStyles.criarContaIcon}
             />
           </View>
 
           <Text style={criarContaStyles.criarContaTitle}>Criar Conta</Text>
           <Text style={criarContaStyles.criarContaSubtitle}>
-            Preencha os campos abaixo
+            Preencha os campos abaixo (LocalStorage)
           </Text>
 
           <TextInput
@@ -184,7 +184,10 @@ export default function CriarConta({ navigation }) {
             <Text style={criarContaStyles.primaryButtonText}>Criar Conta</Text>
           </Pressable>
 
-          <Pressable onPress={() => navigation.navigate('Login')} hitSlop={8}>
+          <Pressable
+            onPress={() => navigation.navigate('LoginLocal')}
+            hitSlop={8}
+          >
             <Text style={criarContaStyles.voltarLoginText}>
               Voltar ao login
             </Text>

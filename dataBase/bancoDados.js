@@ -83,7 +83,7 @@ export async function inserirTarefa(descricao) {
     'INSERT INTO tarefas (descricao) VALUES (?);',
     descricao
   );
-  return result.lastInsertRowId; 
+  return result.lastInsertRowId;
 }
 
 export async function listarTarefas() {

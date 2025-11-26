@@ -2,7 +2,6 @@ import { Pressable, StyleSheet, Text, View, StatusBar } from 'react-native';
 import { useState } from 'react';
 
 export default function Frases({ navigation }) {
-
   const [frase, setFrase] = useState('Toque no botão para gerar');
 
   const frases = [
@@ -16,16 +15,10 @@ export default function Frases({ navigation }) {
     "O futuro é construído no presente.",
     "Respira… e tenta de novo.",
     "Um passo de cada vez é o suficiente.",
-    "Seja forte como o código do Lucas (ou tente).",
     "Se nada der certo, reinicia o app.",
-    "O importante é não desistir… ou é?",
-    "Quem cedo madruga… provavelmente está com sono.",
-    "Confia, o pai tá on.",
-    "O mundo é dos persistentes.",
     "Vitória exige esforço. E café.",
-    "Seu potencial é maior do que você imagina.",
     "Cada erro é um bug que te deixa melhor.",
-    "Só vai!"
+    "Só vai!",
   ];
 
   const gerarFrases = () => {
@@ -34,13 +27,14 @@ export default function Frases({ navigation }) {
   };
 
   const limparFrases = () => {
-    setFrase("Limpado");
+    setFrase('...');
   };
 
   return (
     <View style={styles.app}>
-      <StatusBar barStyle="light-content" backgroundColor="#181818ff" />
+      <StatusBar barStyle="dark-content" backgroundColor="#f4f6f9" />
 
+      {/* Botão voltar */}
       <Pressable
         style={styles.backButton}
         onPress={() => navigation.navigate('Home')}
@@ -49,7 +43,7 @@ export default function Frases({ navigation }) {
         <Text style={styles.backText}>{'<'} Voltar</Text>
       </Pressable>
 
-      <Text style={styles.titulo}>Frases</Text>
+      <Text style={styles.titulo}>Frases do Dia</Text>
 
       <View style={styles.fraseContainer}>
         <Text style={styles.fraseText}>{frase}</Text>
@@ -57,17 +51,23 @@ export default function Frases({ navigation }) {
 
       <View style={styles.botaoContainer}>
         <Pressable
-          style={({ pressed }) => [styles.btn, pressed && styles.btnPressionado]}
+          style={({ pressed }) => [
+            styles.btnPrimario,
+            pressed && { opacity: 0.85 },
+          ]}
           onPress={gerarFrases}
         >
           <Text style={styles.botaoText}>Gerar</Text>
         </Pressable>
 
         <Pressable
-          style={({ pressed }) => [styles.btnLimpar, pressed && styles.btnPressionadoLimpar]}
+          style={({ pressed }) => [
+            styles.btnSecundario,
+            pressed && { opacity: 0.85 },
+          ]}
           onPress={limparFrases}
         >
-          <Text style={styles.botaoText}>Limpar</Text>
+          <Text style={styles.botaoText2}>Limpar</Text>
         </Pressable>
       </View>
     </View>
@@ -77,7 +77,7 @@ export default function Frases({ navigation }) {
 const styles = StyleSheet.create({
   app: {
     flex: 1,
-    backgroundColor: '#181818ff',
+    backgroundColor: '#f4f6f9',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -87,87 +87,85 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 50,
     left: 20,
-    backgroundColor: '#1E1E1E',  
+    backgroundColor: '#ffffff',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-    elevation: 5,         
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 3,
   },
-
   backText: {
-    color: '#E63946', 
+    color: '#4A90E2',
     fontWeight: '600',
     fontSize: 14,
   },
 
   titulo: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    color: '#E63946',
-    marginBottom: 20,
+    fontSize: 30,
+    fontWeight: '700',
+    color: '#4A90E2',
+    marginBottom: 22,
   },
 
   fraseContainer: {
-    backgroundColor: '#333',
-    padding: 20,
-    marginBottom: 30,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
+    backgroundColor: '#ffffff',
+    padding: 22,
+    marginBottom: 32,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#dee2e6',
+    elevation: 4,
     width: '100%',
-    maxWidth: 350,
+    maxWidth: 360,
     alignItems: 'center',
   },
 
   fraseText: {
     fontSize: 18,
-    color: '#fff',
+    color: '#333',
     textAlign: 'center',
+    lineHeight: 24,
+    fontWeight: '500',
   },
 
   botaoContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     width: '100%',
-    maxWidth: 350,
+    maxWidth: 360,
   },
 
-  btn: {
-    backgroundColor: '#E63946',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginHorizontal: 10,
+  btnPrimario: {
+    flex: 1,
+    backgroundColor: '#4A90E2',
+    paddingVertical: 14,
+    borderRadius: 10,
+    marginRight: 10,
     alignItems: 'center',
-    justifyContent: 'center',
     elevation: 3,
   },
 
-  btnPressionado: {
-    backgroundColor: '#e1535fff',
-  },
-
-  btnLimpar: {
-    backgroundColor: '#727272ff',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginHorizontal: 10,
+  btnSecundario: {
+    flex: 1,
+    backgroundColor: '#dee2e6',
+    paddingVertical: 14,
+    borderRadius: 10,
+    marginLeft: 10,
     alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 3,
-  },
-
-  btnPressionadoLimpar: {
-    backgroundColor: '#555',
+    elevation: 2,
   },
 
   botaoText: {
-    color: '#fff',
-    fontSize: 18,
+    color: '#ffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
+  botaoText2: {
+    color: '#4A90E2',
+    fontSize: 16,
     fontWeight: '600',
   },
 });

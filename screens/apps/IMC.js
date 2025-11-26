@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, StyleSheet, TextInput, Pressable, Keyboard, KeyboardAvoidingView, StatusBar, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Pressable, Keyboard, KeyboardAvoidingView, StatusBar, Alert, ScrollView } from 'react-native';
 
 export default function IMC({ navigation }) {
   const [peso, setPeso] = useState('');
@@ -44,66 +44,72 @@ export default function IMC({ navigation }) {
     <KeyboardAvoidingView style={styles.app} behavior="padding">
       <StatusBar barStyle="dark-content" backgroundColor="#e4ebf0" />
 
-      <Pressable
-        style={styles.backButton}
-        onPress={() => navigation.navigate('Home')}
-        hitSlop={8}
+      <ScrollView
+        contentContainerStyle={styles.content}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.backText}>{'<'} Voltar</Text>
-      </Pressable>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => navigation.navigate('Home')}
+          hitSlop={8}
+        >
+          <Text style={styles.backText}>{'<'} Voltar</Text>
+        </Pressable>
 
-      <Pressable style={styles.innerContainer} onPress={Keyboard.dismiss}>
-        <View style={styles.card}>
-          <Text style={styles.titulo}>Calcule seu IMC</Text>
-          <Text style={styles.subtitulo}>
-            Preencha os campos abaixo para descobrir seu Índice de Massa Corporal.
-          </Text>
+        <Pressable style={styles.innerContainer} onPress={Keyboard.dismiss}>
+          <View style={styles.card}>
+            <Text style={styles.titulo}>Calcule seu IMC</Text>
+            <Text style={styles.subtitulo}>
+              Preencha os campos abaixo para descobrir seu Índice de Massa Corporal.
+            </Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Peso (ex: 70.5)"
-            keyboardType="numeric"
-            value={peso}
-            onChangeText={setPeso}
-            returnKeyType="next"
-            onSubmitEditing={() => alturaRef.current.focus()}
-            placeholderTextColor="#adb5bd"
-          />
+            <TextInput
+              style={styles.input}
+              placeholder="Peso (ex: 70.5)"
+              keyboardType="numeric"
+              value={peso}
+              onChangeText={setPeso}
+              returnKeyType="next"
+              onSubmitEditing={() => alturaRef.current.focus()}
+              placeholderTextColor="#adb5bd"
+            />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Altura (ex: 1.75)"
-            keyboardType="numeric"
-            value={altura}
-            onChangeText={setAltura}
-            ref={alturaRef}
-            returnKeyType="done"
-            onSubmitEditing={calcular}
-            placeholderTextColor="#adb5bd"
-          />
+            <TextInput
+              style={styles.input}
+              placeholder="Altura (ex: 1.75)"
+              keyboardType="numeric"
+              value={altura}
+              onChangeText={setAltura}
+              ref={alturaRef}
+              returnKeyType="done"
+              onSubmitEditing={calcular}
+              placeholderTextColor="#adb5bd"
+            />
 
-          <Pressable
-            style={({ pressed }) => [styles.botao, pressed && { opacity: 0.8 }]}
-            onPress={calcular}
-          >
-            <Text style={styles.botaoTexto}>Calcular</Text>
-          </Pressable>
+            <Pressable
+              style={({ pressed }) => [styles.botao, pressed && { opacity: 0.8 }]}
+              onPress={calcular}
+            >
+              <Text style={styles.botaoTexto}>Calcular</Text>
+            </Pressable>
 
-          {imc !== null && (
-            <View style={styles.resultadoContainer}>
-              <Text style={styles.resultadoValor}>{imc.toFixed(2)}</Text>
-              <Text style={styles.resultadoclassificacao}>{classificacao}</Text>
+            {imc !== null && (
+              <View style={styles.resultadoContainer}>
+                <Text style={styles.resultadoValor}>{imc.toFixed(2)}</Text>
+                <Text style={styles.resultadoclassificacao}>{classificacao}</Text>
 
-              <Pressable
-                style={({ pressed }) => [styles.botaoLimpar, pressed && { opacity: 0.8 }]}
-                onPress={limpar}
-              >
-                <Text style={styles.botaoLimparTexto}>Limpar</Text>
-              </Pressable>
-            </View>
-          )}
-        </View>
-      </Pressable>
+                <Pressable
+                  style={({ pressed }) => [styles.botaoLimpar, pressed && { opacity: 0.8 }]}
+                  onPress={limpar}
+                >
+                  <Text style={styles.botaoLimparTexto}>Limpar</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
+        </Pressable>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -111,8 +117,9 @@ export default function IMC({ navigation }) {
 const styles = StyleSheet.create({
   app: {
     flex: 1,
-    backgroundColor: '#e4ebf0',
+    backgroundColor: '#f4f6f9',
   },
+
   backButton: {
     position: 'absolute',
     top: 50,
@@ -121,29 +128,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
+    shadowColor: '#242424ff',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
     zIndex: 10,
-    elevation: 3,
   },
+
   backText: {
-    color: '#4180ab',
+    color: '#4A90E2',
     fontWeight: '600',
     fontSize: 14,
   },
+
+  content: {
+    flexGrow: 1,
+    paddingHorizontal: 20,
+    paddingTop: 100,
+    paddingBottom: 60,
+  },
+
   innerContainer: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
   },
+
   card: {
     backgroundColor: '#fff',
     borderRadius: 16,
     padding: 25,
-    elevation: 5,
+    shadowColor: '#242424ff',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 4,
   },
+
   titulo: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: '#4180ab',
+    color: '#4A90E2',
     textAlign: 'center',
     marginBottom: 10,
   },
@@ -165,7 +190,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   botao: {
-    backgroundColor: '#4180ab',
+    backgroundColor: '#4A90E2',
     height: 50,
     borderRadius: 8,
     justifyContent: 'center',
@@ -184,7 +209,7 @@ const styles = StyleSheet.create({
   resultadoValor: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#4180ab',
+    color: '#4A90E2',
   },
   resultadoclassificacao: {
     fontSize: 18,
@@ -192,7 +217,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   botaoLimpar: {
-    backgroundColor: '#d3544a',
+    backgroundColor: '#E63946',
     width: '100%',
     height: 40,
     borderRadius: 8,
