@@ -4,17 +4,9 @@
 
 Este aplicativo foi desenvolvido em React Native como parte da disciplina de **Programação para Dispositivos Móveis**. O projeto consiste na implementação de um sistema de login e cadastro simples, funcionando como um **portfólio mobile** para agrupar e acessar quatro aplicações distintas.
 
-O sistema permite autenticação de usuários, criação de conta e recuperação de senha, utilizando armazenamento local de dados. Após o login, o usuário tem acesso aos seguintes projetos integrados no aplicativo:
-
-- **Calculadora de IMC**
-- **Lista de Tarefas**
-- **Conversor de Temperatura**
-- **Frases Motivacionais**
-
-
 <p align="center">
   <br>
-  <img src="./assets/icon-profile.png" width="300">
+  <img src="./assets/Icon Login App.png" width="300">
   <br>
 </p>
 
@@ -42,6 +34,17 @@ A construção deste projeto foi baseada nas seguintes tecnologias:
 - **Validação de Campos**: Verificação de e-mail, senha e campos obrigatórios.
 - **Portfólio de Aplicações**: Centralização de quatro projetos mobile em um único aplicativo.
 - **Interface Responsiva**: Ajuste automático da interface ao abrir o teclado.
+
+---
+
+## Telas
+
+O sistema permite autenticação de usuários, criação de conta e recuperação de senha, utilizando armazenamento local de dados. Após o login, o usuário tem acesso aos seguintes projetos integrados no aplicativo:
+
+- **Calculadora de IMC**
+- **Lista de Tarefas**
+- **Conversor de Temperatura**
+- **Frases Motivacionais**
 
 ---
 
